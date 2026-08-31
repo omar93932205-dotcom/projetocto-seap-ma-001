@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Verificar remoção do sufixo '(SEAP_MA_26)' do título do concurso em DUAS páginas do site público (/confirmacao.html e /inscricao-realizada.html). Testar em desktop (1920x1000) e mobile (390x844)."
+user_problem_statement: "Verificar o modal 'Aviso Importante' na página inicial /inicio.html. Testar desktop (1920x1000) e mobile (390x844)."
 
 backend:
   - task: "Seed de 150 inscrições realistas (script /app/scripts/seed_inscricoes.py)"
@@ -191,6 +191,18 @@ frontend:
         -agent: "testing"
         -comment: "✅ VALIDADO: Sufixo 'SEAP_MA_26' NÃO EXISTE na página /dados-inscricao.html. Testados 2 cenários (desktop 1920x1000 e mobile 390x844): TODOS PASSARAM (2/2 = 100%). Resultados: 1) Desktop (1920x1000): PASS - 'SEAP_MA_26' não encontrado no HTML completo (verificado via document.documentElement.innerHTML), bloco CONCURSO mostra 'Concurso Público da Secretaria de Estado de Administração Penitenciária do Maranhão' (sem sufixo entre parênteses) ✓, observação 'Preencha os campos abaixo' presente ✓; 2) Mobile (390x844): PASS - 'SEAP_MA_26' não encontrado no HTML completo, bloco CONCURSO com título correto ✓, observação 'Preencha os campos abaixo' presente ✓. Verificação realizada via grep no arquivo fonte (exit code 1 = não encontrado) e via Playwright no HTML renderizado. Screenshots salvos: dados_inscricao_desktop.png, dados_inscricao_mobile.png. Requisito completamente atendido - a substring 'SEAP_MA_26' não aparece em nenhum lugar da página (incluindo título, bloco CONCURSO, rodapé e cabeçalhos ocultos)."
 
+  - task: "Verificar modal 'Aviso Importante' na página /inicio.html"
+    implemented: true
+    working: true
+    file: "/app/frontend/public/inicio.html"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "✅ VALIDADO: Modal 'Aviso Importante' funciona perfeitamente em desktop e mobile. Testados 2 cenários (desktop 1920x1000 e mobile 390x844): TODOS PASSARAM (2/2 = 100%). Resultados: 1) Desktop (1920x1000): PASS - Modal aparece após ~1 segundo com display:flex ✓, título 'Aviso Importante' presente ✓, primeiro prazo '31 de agosto de 2026' para 'Inspetor e Monitor' presente ✓, segundo prazo '14 de setembro de 2026' para 'Especialista e Assistente' presente ✓, botão 'OK, entendi' fecha o modal (display:none) ✓, seção 'Inscrições Abertas' visível ✓, ambos os cards presentes ('SEAP MA 26 Especialista e Assistente' e 'SEAP MA 26 Inspetor e Monitor') ✓; 2) Mobile (390x844): PASS - Modal aparece após ~1 segundo com display:flex ✓, título 'Aviso Importante' presente ✓, ambos os prazos presentes (31 de agosto de 2026 e 14 de setembro de 2026) ✓, ambas as posições presentes (Inspetor e Monitor, Especialista e Assistente) ✓, botão 'OK, entendi' fecha o modal (display:none) ✓, seção 'Inscrições Abertas' visível ✓, ambos os cards presentes ✓. Screenshots salvos: modal_desktop_open.png, modal_desktop_closed.png, modal_mobile_open.png, modal_mobile_closed.png. Requisito completamente atendido - modal exibe corretamente os dois prazos, fecha ao clicar OK, e os dois cards estão presentes na página inicial."
+
 frontend_test_plan:
   current_focus: []
   method: "Injetar sessionStorage e validar render em /confirmacao.html"
@@ -208,3 +220,5 @@ agent_communication:
     -message: "✅ VALIDAÇÃO /pagamento-pix.html: Sufixo 'SEAP_MA_26' NÃO EXISTE na página. Testados 2 viewports (desktop 1920x1000 e mobile 390x844): TODOS PASSARAM (2/2 = 100%). Verificação via document.documentElement.innerHTML (HTML completo incluindo cabeçalho/rodapé de impressão). Resultados: Desktop PASS - 'SEAP_MA_26' não encontrado, título 'Pagamento via PIX' presente, nome do concurso 'Concurso Público da Secretaria de Estado de Administração Penitenciária do Maranhão' presente, 'SEAP-MA' (com hífen) presente no rodapé ✓; Mobile PASS - mesmos critérios atendidos ✓. Screenshots: pagamento_pix_desktop.png, pagamento_pix_mobile.png. Requisito completamente atendido."
     -agent: "testing"
     -message: "✅ VALIDAÇÃO /dados-inscricao.html: Sufixo 'SEAP_MA_26' NÃO EXISTE na página. Testados 2 viewports (desktop 1920x1000 e mobile 390x844): TODOS PASSARAM (2/2 = 100%). Verificação via document.documentElement.innerHTML (HTML completo da página). Resultados: Desktop PASS - 'SEAP_MA_26' não encontrado no HTML completo, bloco CONCURSO mostra 'Concurso Público da Secretaria de Estado de Administração Penitenciária do Maranhão' (sem sufixo entre parênteses), observação 'Preencha os campos abaixo' presente ✓; Mobile PASS - 'SEAP_MA_26' não encontrado no HTML completo, bloco CONCURSO com título correto, observação 'Preencha os campos abaixo' presente ✓. Verificação adicional: grep no arquivo fonte retornou exit code 1 (não encontrado). Screenshots: dados_inscricao_desktop.png, dados_inscricao_mobile.png. Requisito completamente atendido - a substring 'SEAP_MA_26' não aparece em nenhum lugar da página (incluindo título, bloco CONCURSO, rodapé e cabeçalhos ocultos)."
+    -agent: "testing"
+    -message: "✅ VALIDAÇÃO MODAL /inicio.html: Modal 'Aviso Importante' funciona perfeitamente. Testados 2 viewports (desktop 1920x1000 e mobile 390x844): TODOS PASSARAM (2/2 = 100%). Resultados: Desktop PASS - Modal aparece após ~1 segundo (display:flex), título 'Aviso Importante' presente, ambos os prazos presentes ('31 de agosto de 2026' para 'Inspetor e Monitor' e '14 de setembro de 2026' para 'Especialista e Assistente'), botão 'OK, entendi' fecha o modal (display:none), seção 'Inscrições Abertas' visível, ambos os cards presentes ('SEAP MA 26 Especialista e Assistente' e 'SEAP MA 26 Inspetor e Monitor') ✓; Mobile PASS - Modal aparece após ~1 segundo (display:flex), título 'Aviso Importante' presente, ambos os prazos presentes, ambas as posições presentes, botão 'OK, entendi' fecha o modal (display:none), seção 'Inscrições Abertas' visível, ambos os cards presentes ✓. Screenshots: modal_desktop_open.png, modal_desktop_closed.png, modal_mobile_open.png, modal_mobile_closed.png. Requisito completamente atendido - modal exibe corretamente os dois prazos, fecha ao clicar OK, e os dois cards estão presentes na página inicial."
