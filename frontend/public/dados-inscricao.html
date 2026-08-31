@@ -823,10 +823,18 @@ h2.tituloPagina span { border-bottom:0 !important; text-indent:0 !important; pad
       if(keep){ vaga.value=keep; }
     }
     tipo.addEventListener('change', function(){ fill(); });
+    var forced=null;
+    try{ forced=sessionStorage.getItem('edital_escolhido'); }catch(e){}
+    var done=false;
     try{
       var saved=JSON.parse(sessionStorage.getItem('inscricao_dados')||'{}');
-      if(saved && saved.VAGA){ tipo.value=(['01','02'].indexOf(saved.VAGA)>=0?'1':'2'); fill(saved.VAGA); }
+      if(saved && saved.VAGA){ tipo.value=(['01','02'].indexOf(saved.VAGA)>=0?'1':'2'); fill(saved.VAGA); done=true; }
     }catch(e){}
+    if(!done && (forced==='1'||forced==='2')){ tipo.value=forced; fill(); }
+    // Se veio de um edital especifico, trava o edital (mostra so as vagas dele)
+    if(forced==='1'||forced==='2'){
+      tipo.value=forced; tipo.disabled=true; tipo.style.background='#f1f3f6'; tipo.style.cursor='not-allowed';
+    }
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
