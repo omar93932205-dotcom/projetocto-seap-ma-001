@@ -793,43 +793,42 @@ h2.tituloPagina span { border-bottom:0 !important; text-indent:0 !important; pad
 <fieldset>
 <label class="description">Vaga</label>
 <label class="description error"></label>
+<div class="fgv-field"><label><span class="error">*</span> Tipo de Concurso</label>
+<select class="select" data-testid="select-concurso" id="CONCURSO_TIPO" required="">
+<option selected="" value="">Escolher o concurso</option>
+<option value="1">SEAP MA 26 – Inspetor e Monitor</option>
+<option value="2">SEAP MA 26 – Especialista e Assistente</option>
+</select></div>
 <div class="fgv-field"><label><span class="error">*</span> Cargo / Especialidade</label>
-<select class="select" data-testid="select-vaga" id="VAGA" name="VAGA" required="">
-<option selected="" value="">Escolher</option>
-<optgroup label="SEAP MA 26 – Inspetor e Monitor">
-<option data-price="150.00" value="01">Inspetor de Polícia Penal</option>
-<option data-price="85.00" value="02">Monitor de Ressocialização</option>
-</optgroup>
-<optgroup label="SEAP MA 26 – Especialista e Assistente">
-<option data-price="180.00" value="03">Especialidade: Assistência Social</option>
-<option data-price="180.00" value="04">Especialidade: Direito</option>
-<option data-price="180.00" value="05">Especialidade: Enfermagem</option>
-<option data-price="180.00" value="06">Especialidade: Pedagogia</option>
-<option data-price="180.00" value="07">Especialidade: Psicologia</option>
-<option data-price="120.00" value="08">Especialidade: Técnico Administrativo</option>
-<option data-price="120.00" value="09">Especialidade: Técnico de Enfermagem</option>
-</optgroup>
+<select class="select" data-testid="select-vaga" id="VAGA" name="VAGA" required="" disabled="">
+<option selected="" value="">Escolha o concurso primeiro</option>
 </select></div>
 <script>
-/* Mobile: remove os rótulos dos optgroups do seletor de vagas (evita confusão com o nome da vaga no seletor nativo do celular). No desktop, mantém os títulos. */
+/* Vaga em 2 etapas: escolhe o concurso e o 2º select mostra só as vagas dele. */
 (function(){
-  function flattenVaga(){
-    if(!window.matchMedia('(max-width: 768px)').matches) return;
-    var sel = document.getElementById('VAGA');
-    if(!sel || sel.getAttribute('data-flattened') === '1') return;
-    var groups = sel.querySelectorAll('optgroup');
-    if(!groups.length) return;
-    groups.forEach(function(g){
-      while(g.firstElementChild){ sel.insertBefore(g.firstElementChild, g); }
-      sel.removeChild(g);
-    });
-    sel.setAttribute('data-flattened','1');
+  var CARGOS={
+    '1':[['01','Inspetor de Polícia Penal','150.00'],['02','Monitor de Ressocialização','85.00']],
+    '2':[['03','Especialidade: Assistência Social','180.00'],['04','Especialidade: Direito','180.00'],['05','Especialidade: Enfermagem','180.00'],['06','Especialidade: Pedagogia','180.00'],['07','Especialidade: Psicologia','180.00'],['08','Especialidade: Técnico Administrativo','120.00'],['09','Especialidade: Técnico de Enfermagem','120.00']]
+  };
+  function init(){
+    var tipo=document.getElementById('CONCURSO_TIPO'), vaga=document.getElementById('VAGA');
+    if(!tipo||!vaga) return;
+    function fill(keep){
+      var list=CARGOS[tipo.value]||[];
+      vaga.innerHTML='';
+      if(!list.length){ vaga.disabled=true; vaga.innerHTML='<option value="">Escolha o concurso primeiro</option>'; return; }
+      vaga.disabled=false;
+      var o0=document.createElement('option'); o0.value=''; o0.textContent='Escolher o cargo'; vaga.appendChild(o0);
+      list.forEach(function(c){ var o=document.createElement('option'); o.value=c[0]; o.setAttribute('data-price',c[2]); o.textContent=c[1]; vaga.appendChild(o); });
+      if(keep){ vaga.value=keep; }
+    }
+    tipo.addEventListener('change', function(){ fill(); });
+    try{
+      var saved=JSON.parse(sessionStorage.getItem('inscricao_dados')||'{}');
+      if(saved && saved.VAGA){ tipo.value=(['01','02'].indexOf(saved.VAGA)>=0?'1':'2'); fill(saved.VAGA); }
+    }catch(e){}
   }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', flattenVaga);
-  } else {
-    flattenVaga();
-  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
 </fieldset>
